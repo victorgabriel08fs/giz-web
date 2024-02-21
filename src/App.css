@@ -2,14 +2,18 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
+span{
+  user-select:none
+}
+
+.spining {
   pointer-events: none;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+  .spining {
+    
+    animation: spin-animation ease-in-out infinite 10s ;
   }
 }
 
@@ -28,7 +32,7 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
+@keyframes spin-animation {
   from {
     transform: rotate(0deg);
   }

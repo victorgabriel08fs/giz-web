@@ -6,36 +6,52 @@ import {
   HiOutlineMinusSm,
   HiOutlinePlusSm,
   HiShoppingBag,
-  HiTable,
+  HiHome,
   HiUser,
 } from "react-icons/hi";
 import { twMerge } from "tailwind-merge";
 import logo from "../assets/logo512.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { GiBookCover } from "react-icons/gi";
+import { MdAdminPanelSettings } from "react-icons/md";
 
 function SideBar() {
-  const { logout, user } = useAuth();
+  const { logout, role } = useAuth();
   const handleLogout = async () => {
     await logout();
   };
+  const { pathname } = useLocation();
   return (
     <Sidebar
       className="w-1/5 p-0 h-full"
       aria-label="Sidebar with multi-level dropdown example"
     >
-      <Sidebar.Logo href="#" img={logo} imgAlt="Flowbite logo">
-        Giz
-      </Sidebar.Logo>
-      <h4>Seja bem-vindo, {user.name}</h4>
+      <div className="h-14 pointer-events-none select-none flex flex-row m-2 gap-2 justify-start items-center">
+        <GiBookCover size={40} className="text-blue-800 h-full spining" />
+        <span className="text-2xl uppercase font-bold">Giz</span>
+      </div>
+
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          <Sidebar.Item href="#" icon={HiChartPie}>
-            Dashboard
-          </Sidebar.Item>
+          {role==="student"&&<Sidebar.Item
+            active={pathname === "/"}
+            className="cursor-pointer font-semibold"
+            icon={HiHome}
+          >
+            <Link to="/">Home</Link>
+          </Sidebar.Item>}
+          {role==="admin"&&<Sidebar.Item
+            active={pathname === "/dashboard"}
+            className="cursor-pointer font-semibold"
+            icon={HiChartPie}
+          >
+            <Link to="/">Dashboard</Link>
+          </Sidebar.Item>}
           <Sidebar.Collapse
-            icon={HiShoppingBag}
-            label="E-commerce"
+            className="cursor-pointer font-semibold w-full"
+            icon={MdAdminPanelSettings}
+            label="Administrador"
             renderChevronIcon={(theme, open) => {
               const IconComponent = open ? HiOutlineMinusSm : HiOutlinePlusSm;
 
@@ -49,52 +65,57 @@ function SideBar() {
               );
             }}
           >
-            <Sidebar.Item href="#">
-              <Link to="users">Users</Link>
+            <Sidebar.Item
+              active={pathname === "/users"}
+              className="w-full cursor-pointer font-semibold"
+            >
+              <Link className="w-full h-full" to="users">
+                Usuários
+              </Link>
             </Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Products</Sidebar.Item>
-            <Sidebar.Item href="#">Sales</Sidebar.Item>
-            <Sidebar.Item href="#">Refunds</Sidebar.Item>
-            <Sidebar.Item href="#">Shipping</Sidebar.Item>
+            <Sidebar.Item
+              active={pathname === "/careers"}
+              className="w-full cursor-pointer font-semibold"
+            >
+              <Link className="w-full h-full" to="careers">
+                Cursos
+              </Link>
+            </Sidebar.Item>
           </Sidebar.Collapse>
-          <Sidebar.Item href="#" icon={HiInbox}>
+          <Sidebar.Item className="cursor-pointer font-semibold" icon={HiInbox}>
             Inbox
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiUser}>
+          <Sidebar.Item className="cursor-pointer font-semibold" icon={HiUser}>
             Users
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
+          <Sidebar.Item
+            className="cursor-pointer font-semibold"
+            icon={HiShoppingBag}
+          >
             Products
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
+          <Sidebar.Item
+            className="cursor-pointer font-semibold"
+            icon={HiShoppingBag}
+          >
             Products
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
+          <Sidebar.Item
+            className="cursor-pointer font-semibold"
+            icon={HiShoppingBag}
+          >
             Products
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiShoppingBag}>
+          <Sidebar.Item
+            className="cursor-pointer font-semibold"
+            icon={HiShoppingBag}
+          >
             Products
           </Sidebar.Item>
-          <Sidebar.Item href="#" icon={HiArrowSmLeft}>
+          <Sidebar.Item
+            className="cursor-pointer font-semibold"
+            icon={HiArrowSmLeft}
+          >
             <div
               onClick={() => {
                 handleLogout();

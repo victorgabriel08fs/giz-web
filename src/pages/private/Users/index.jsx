@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../../../services/api";
+import PrivateLayout from "../../../layouts/PrivateLayout";
+import UsersList from "../../../components/UsersList";
 
 export default function Index() {
   const [users, setUsers] = useState([]);
@@ -13,11 +15,10 @@ export default function Index() {
     });
   };
   return (
-    <div>
-      <h1>Usuários ({users.length})</h1>
-      {users.length === 0
-        ? "Nenhum usuário encontrado"
-        : users.map((user) => <span>{user.name}</span>)}
-    </div>
+    <PrivateLayout title="Usuários">
+      <div className="w-full h-full">
+        <UsersList users={users}/>
+      </div>
+    </PrivateLayout>
   );
 }

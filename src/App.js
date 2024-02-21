@@ -1,8 +1,8 @@
 import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
-import Login from "./pages/private/public/Auth/Login";
+import Login from "./pages/public/Auth/Login";
 import PrivateRoutes from "./routes/index.routes";
-import Loading from "./pages/private/public/Loading";
+import Loading from "./pages/public/Loading";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 export const notify = (text) =>
