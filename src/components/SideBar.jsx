@@ -29,12 +29,12 @@ function SideBar() {
     >
       <div className="h-14 pointer-events-none select-none flex flex-row m-2 gap-2 justify-start items-center">
         <GiBookCover size={40} className="text-blue-800 h-full spining" />
-        <span className="text-2xl uppercase font-bold">Giz</span>
+        <span className="text-2xl uppercase font-bold">Giz </span><span className="text-blue-800 font-semibold">{role==="student"?"Aluno":(role==="teacher"?"Professor":"ADMIN")}</span>
       </div>
 
       <Sidebar.Items>
         <Sidebar.ItemGroup>
-          {role==="student"&&<Sidebar.Item
+          {(role==="student"||role==="teacher")&&<Sidebar.Item
             active={pathname === "/"}
             className="cursor-pointer font-semibold"
             icon={HiHome}

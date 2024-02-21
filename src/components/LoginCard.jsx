@@ -60,6 +60,7 @@ export default function LoginCard({
             required
           >
            <option selected value="student">Estudante</option>
+           <option value="teacher">Professor</option>
            <option value="admin">Administrador</option>
           </Select>
         </div>
