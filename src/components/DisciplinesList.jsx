@@ -1,11 +1,16 @@
- 
+import { Button, Table } from "flowbite-react";
+import { HiUserGroup } from "react-icons/hi";
+import LoadingComponent from "./LoadingComponent";
+import ExercisesModal from "./ExercisesModal";
+import { useState } from "react";
+import DisciplineStudentsModal from "./DisciplineStudentsModal";
+import { Link } from "react-router-dom";
 
-import { Button } from "flowbite-react";
-import { FaTrashRestoreAlt } from "react-icons/fa";
-import { HiTrash, HiEye, HiPencil } from "react-icons/hi";
-
-function DisciplinesList({ disciplines }) {
-
+function DisciplinesList({ disciplines, loading, bond }) {
+  const [openModal, setOpenModal] = useState(false);
+  const [selectedExercises, setSelectedExercises] = useState(null);
+  const [openModalStudents, setOpenModalStudents] = useState(false);
+  const [selectedRegistrations, setSelectedRegistrations] = useState(null);
   const total = (exercises) => {
     var total = 0;
     exercises.map((item) => {
@@ -14,47 +19,76 @@ function DisciplinesList({ disciplines }) {
     return total;
   };
   return (
-    <ul className="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto w-full pr-4 max-h-96">
-      {disciplines.map((discipline) => (
-        <li className="sm:py-2 hover:bg-slate-100 w-full">
-          <div className="flex items-center p-6">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs font-medium text-gray-900 dark:text-white">
-                {discipline?.name ?? "Não informado"}
-              </p>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                {discipline?.exercises.length ?? "Não informado"}
-              </p>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                {`${total(discipline?.exercises)}/100` ?? "Não informado"}
-              </p>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-xs text-gray-500 dark:text-gray-400">
-                {discipline?.registrations.length ?? "Não informado"}
-              </p>
-            </div>
-            <div className="min-w-0 flex-1">
-              <Button.Group>
-                <Button color="gray" className="hover:text-black">
-                  <HiEye size={18} />
-                </Button>
-                <Button color="gray" className="hover:text-black">
-                  <HiPencil size={18} />
-                </Button>
-                <Button color="gray" className="hover:text-black">
-                  {<HiTrash size={18} /> ?? <FaTrashRestoreAlt size={18} />}
-                </Button>
-              </Button.Group>
-            </div>
-          </div>
-        </li>
-      ))}
-    </ul>
+    <>
+      {loading ? (
+        <LoadingComponent />
+      ) : (
+        <div className="overflow-x-auto">
+          <Table striped>
+            <Table.Head>
+              <Table.HeadCell>Disciplina</Table.HeadCell>
+              <Table.HeadCell>Matriculados</Table.HeadCell>
+              <Table.HeadCell>Nota lançada</Table.HeadCell>
+              <Table.HeadCell></Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y">
+              {disciplines.map((discipline) => (
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {discipline.name}
+                  </Table.Cell>
+                  <Table.Cell
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedRegistrations(discipline.registrations);
+                      setOpenModalStudents(true);
+                    }}
+                  >
+                    {discipline.registrations.length}
+                  </Table.Cell>
+                  <Table.Cell
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedExercises(discipline.exercises);
+                      setOpenModal(true);
+                    }}
+                  >
+                    {total(discipline.exercises)}
+                  </Table.Cell>
+                  <Table.Cell className="flex flex-row gap-3 items-center justify-center">
+                    <Link to={`lessons/${discipline.id}`}>
+                      <Button color="gray" title="Aulas">
+                        <HiUserGroup className="h-4 w-3" />
+                      </Button>
+                    </Link>
+                    <Button color="gray">
+                      <HiUserGroup className="h-4 w-3" />
+                    </Button>
+                    <Button color="gray">
+                      <HiUserGroup className="h-4 w-3" />
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </div>
+      )}
+      {selectedExercises !== null && (
+        <ExercisesModal
+          openModal={openModal}
+          setOpenModal={setOpenModal}
+          exercises={selectedExercises}
+        />
+      )}
+      {selectedRegistrations !== null && (
+        <DisciplineStudentsModal
+          openModal={openModalStudents}
+          setOpenModal={setOpenModalStudents}
+          registrations={selectedRegistrations}
+        />
+      )}
+    </>
   );
 }
 

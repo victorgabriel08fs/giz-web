@@ -2,36 +2,50 @@ import { Select } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
 import RegistrationsList from "./RegistrationsList";
+import RegistrationsSchedules from "./RegistrationsSchedules";
 
-export default function StudentHome({ user,role }) {
+export default function StudentHome({ user, role }) {
+  const [loading, setLoading] = useState(true);
+  const [contentShow, setContentShow] = useState("points");
   const [registrations, setRegistrations] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState(null);
   const [bonds, setBonds] = useState([]);
   const [selectedBond, setSelectedBond] = useState(null);
   useEffect(() => {
-    if (bonds.length === 0) {
-      loadBonds();
-    }
-    if (semesters.length === 0 && selectedBond?.id > 0) {
-      loadSemesters();
-    }
-    if (selectedSemester?.id > 0) {
+    loadBonds();
+  }, []);
+  useEffect(() => {
+    if (selectedSemester !== null) {
       loadData();
     }
-  }, [selectedSemester, selectedBond]);
+  }, [selectedSemester]);
+  useEffect(() => {
+    if (selectedBond !== null) {
+      loadSemesters();
+    }
+  }, [selectedBond]);
 
   const loadData = async () => {
+    setLoading(true);
     await api
       .get("registrations", {
-        params: { user_id: user.id, semester_id: selectedSemester.id },
+        params: {
+          user_id: user.id,
+          bond_id: selectedBond.id,
+          semester_id: selectedSemester.id,
+        },
       })
       .then((res) => {
         var data = res.data;
         setRegistrations(data);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   const loadSemesters = async () => {
+    setLoading(true);
     await api
       .get("semesters", {
         params: { user_id: user.id, bond_id: selectedBond.id },
@@ -43,6 +57,7 @@ export default function StudentHome({ user,role }) {
       });
   };
   const loadBonds = async () => {
+    setLoading(true);
     await api
       .get("bonds", {
         params: { user_id: user.id, type: role },
@@ -61,7 +76,7 @@ export default function StudentHome({ user,role }) {
           <Select
             name="bond"
             id=""
-            className="w-2/3"
+            className="w-3/5"
             onChange={(e) => {
               setSelectedBond(
                 bonds.filter((item) => {
@@ -76,37 +91,54 @@ export default function StudentHome({ user,role }) {
               </option>
             ))}
           </Select>
-          {selectedBond && (
-            <Select
-              name="semester"
-              id=""
-              className="w-1/3"
-              onChange={(e) => {
-                setSelectedSemester(
-                  semesters.filter((item) => {
-                    return (
-                      parseInt(item.id) === parseInt(e.target.value) && item
-                    );
-                  })[0]
-                );
-              }}
-            >
-              {semesters.map((semester) => (
-                <option
-                  selected={semester.id === semesters[0].id}
-                  value={semester.id}
-                >
-                  {`${semester.reference.substring(
-                    4
-                  )}/${semester.reference.substring(0, 4)}`}
-                </option>
-              ))}
-            </Select>
-          )}
+          <Select
+            name="semester"
+            id=""
+            className="w-1/3"
+            onChange={(e) => {
+              setSelectedSemester(
+                semesters.filter((item) => {
+                  return parseInt(item.id) === parseInt(e.target.value) && item;
+                })[0]
+              );
+            }}
+          >
+            {semesters.map((semester) => (
+              <option
+                selected={semester.id === semesters[0].id}
+                value={semester.id}
+              >
+                {`${semester.reference.substring(
+                  4
+                )}/${semester.reference.substring(0, 4)}`}
+              </option>
+            ))}
+          </Select>
+          <Select
+            className="w-2/5"
+            onChange={(e) => {
+              setContentShow(e.target.value);
+            }}
+          >
+            <option value="points">Nota/Frequência</option>
+            <option value="schedules">Horários</option>
+          </Select>
         </div>
       </div>
-      <div className="flow-root w-full">
-        <RegistrationsList registrations={registrations} bond={selectedBond} />
+      <div className="flow-root overflow-y-auto w-full">
+        {contentShow === "points" ? (
+          <RegistrationsList
+            loading={loading}
+            registrations={registrations}
+            bond={selectedBond}
+          />
+        ) : (
+          <RegistrationsSchedules
+            loading={loading}
+            registrations={registrations}
+            bond={selectedBond}
+          />
+        )}
       </div>
     </>
   );

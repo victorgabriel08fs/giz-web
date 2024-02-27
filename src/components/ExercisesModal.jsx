@@ -3,25 +3,11 @@
 import { Button, Modal, Table } from "flowbite-react";
 import { useState } from "react";
 
-export default function RegistrationExercisesModal({
+export default function ExercisesModal({
   openModal,
   setOpenModal,
-  regExercises,
+  exercises,
 }) {
-  const totalReg = () => {
-    var total = 0;
-    regExercises.map((item) => {
-      total = parseFloat(total) + parseFloat(item.points);
-    });
-    return total;
-  };
-  const totalEx = () => {
-    var total = 0;
-    regExercises.map((item) => {
-      total = parseFloat(total) + parseFloat(item.exercise.points);
-    });
-    return total;
-  };
   return (
     <Modal show={openModal} onClose={() => setOpenModal(false)}>
       <Modal.Header>Terms of Service</Modal.Header>
@@ -34,13 +20,13 @@ export default function RegistrationExercisesModal({
               <Table.HeadCell>Nota</Table.HeadCell>
             </Table.Head>
             <Table.Body className="divide-y">
-              {regExercises.map((regExercise) => (
+              {exercises.map((exercise) => (
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
-                    {regExercise.exercise.name}
+                    {exercise.name}
                   </Table.Cell>
-                  <Table.Cell>{regExercise.exercise.description}</Table.Cell>
-                  <Table.Cell>{`${regExercise.points}/${regExercise.exercise.points}`}</Table.Cell>
+                  <Table.Cell>{exercise.description}</Table.Cell>
+                  <Table.Cell>{exercise.points}</Table.Cell>
                 </Table.Row>
               ))}
             </Table.Body>

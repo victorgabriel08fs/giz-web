@@ -4,24 +4,29 @@ import { api } from "../services/api";
 import DisciplinesList from "./DisciplinesList";
 
 export default function TeacherHome({ user, role }) {
+  const [loading, setLoading] = useState(true);
   const [disciplines, setDisciplines] = useState([]);
   const [semesters, setSemesters] = useState([]);
   const [selectedSemester, setSelectedSemester] = useState(null);
   const [bonds, setBonds] = useState([]);
   const [selectedBond, setSelectedBond] = useState(null);
   useEffect(() => {
-    if (bonds.length === 0) {
-      loadBonds();
-    }
+    loadBonds();
+  }, []);
+  useEffect(() => {
     if (selectedBond?.id > 0) {
       loadSemesters();
     }
+  }, [selectedBond]);
+
+  useEffect(() => {
     if (selectedSemester?.id > 0) {
       loadData();
     }
-  }, [selectedSemester, selectedBond]);
-
+  }, [selectedSemester]);
+  
   const loadData = async () => {
+    setLoading(true);
     await api
       .get("disciplines", {
         params: {
@@ -33,9 +38,13 @@ export default function TeacherHome({ user, role }) {
       .then((res) => {
         var data = res.data;
         setDisciplines(data);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
   const loadSemesters = async () => {
+    setLoading(true);
     await api
       .get("semesters", {
         params: { bond_id: selectedBond.id },
@@ -47,6 +56,7 @@ export default function TeacherHome({ user, role }) {
       });
   };
   const loadBonds = async () => {
+    setLoading(true);
     await api
       .get("bonds", {
         params: { user_id: user.id, type: role },
@@ -109,8 +119,12 @@ export default function TeacherHome({ user, role }) {
           )}
         </div>
       </div>
-      <div className="flow-root w-full">
-        <DisciplinesList disciplines={disciplines} bond={selectedBond} />
+      <div className={`flow-root h-full ${!loading&&'overflow-auto'} w-full`}>
+        <DisciplinesList
+          loading={loading}
+          disciplines={disciplines}
+          bond={selectedBond}
+        />
       </div>
     </>
   );

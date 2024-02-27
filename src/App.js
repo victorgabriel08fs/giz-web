@@ -1,10 +1,9 @@
 import "./App.css";
 import { useAuth } from "./contexts/AuthContext";
-import Login from "./pages/public/Auth/Login";
-import PrivateRoutes from "./routes/index.routes";
 import Loading from "./pages/public/Loading";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import Routes from "./routes/index.routes";
 export const notify = (text) =>
   toast(text, {
     position: "top-right",
@@ -32,7 +31,7 @@ function App() {
         pauseOnHover
         theme="light"
       />
-      {loading ? <Loading /> : auth ? <PrivateRoutes /> : <Login />}
+      {loading ? <Loading /> : <Routes/>}
     </>
   );
 }

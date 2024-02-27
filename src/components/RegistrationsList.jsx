@@ -1,8 +1,11 @@
 import { useState } from "react";
 import RegistrationExercisesModal from "./RegistrationExercisesModal";
+import { Table } from "flowbite-react";
+import LoadingComponent from "./LoadingComponent";
 
-function RegistrationsList({ registrations, bond }) {
+function RegistrationsList({ loading, registrations, bond }) {
   const [openModal, setOpenModal] = useState(false);
+  const [selectedRegExercises, setSelectedRegExercises] = useState(null);
   const resultLiBg = (points) => {
     var res;
     if (points >= 70) {
@@ -56,84 +59,63 @@ function RegistrationsList({ registrations, bond }) {
   };
 
   return (
-    <ul className="divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto w-full pr-4 max-h-96">
-      {registrations.map((registration) => (
+    <>
+      {loading ? (
+        <LoadingComponent />
+      ) : (
         <>
-          <li
-            className={`font-bold sm:py-2 ${
-              registration.status !== "PENDING" &&
-              registration.status !== "IN_COURSE" &&
-              `${resultLiBg(registration.points)} ${resultLiText(
-                registration.points
-              )}`
-            }  w-full`}
-          >
-            <div className="grid grid-cols-9 gap-4 p-6">
-              <div className="col-span-3 flex justify-start">
-                <p
-                  className="truncate text-xs font-medium "
-                  title={
-                    `${registration?.discipline?.name} ${
-                      registration?.discipline?.career?.id !== bond?.career?.id
-                        ? ` (${registration?.discipline?.career?.name})`
-                        : ""
-                    }` ?? "Não informado"
-                  }
+          <Table>
+            <Table.Head>
+              <Table.HeadCell>Disciplina</Table.HeadCell>
+              <Table.HeadCell>Professor</Table.HeadCell>
+              <Table.HeadCell>Faltas</Table.HeadCell>
+              <Table.HeadCell>Nota</Table.HeadCell>
+              <Table.HeadCell>Situação</Table.HeadCell>
+            </Table.Head>
+            <Table.Body className="divide-y">
+              {registrations.map((registration) => (
+                <Table.Row
+                  className={`bg-white dark:border-gray-700 dark:bg-gray-800 ${`font-bold sm:py-2 ${
+                    registration.status !== "PENDING" &&
+                    registration.status !== "IN_COURSE" &&
+                    `${resultLiBg(registration.points)} ${resultLiText(
+                      registration.points
+                    )}`
+                  }  w-full`}`}
                 >
-                  {`${registration?.discipline?.name} ${
-                    registration?.discipline?.career?.id !== bond?.career?.id
-                      ? ` (${registration?.discipline?.career?.name})`
-                      : ""
-                  }` ?? "Não informado"}
-                </p>
-              </div>
-              <div className="col-span-2 flex justify-start">
-                <p
-                  className="truncate text-xs "
-                  title={
-                    registration?.discipline?.teacher?.name ?? "Não informado"
-                  }
-                >
-                  {registration?.discipline?.teacher?.name ?? "Não informado"}
-                </p>
-              </div>
-              <div className="flex justify-start">
-                <p
-                  className="truncate text-xs cursor-pointer"
-                  title={registration.points ?? "Não informado"}
-                  onClick={() => {
-                    setOpenModal(true);
-                  }}
-                >
-                  {registration.points ?? "Não informado"}
-                </p>
-              </div>
-              <div className="flex justify-start">
-                <p
-                  className="truncate text-xs "
-                  title={registration?.absences ?? "Não informado"}
-                >
-                  {registration?.absences ?? "Não informado"}
-                </p>
-              </div>
-              <div className="col-span-2 flex justify-start">
-                <p
-                  className="truncate text-xs "
-                  title={translateStatus(registration.status)}
-                >
-                  {translateStatus(registration.status)}
-                </p>
-              </div>
-            </div>
-          </li>
-          <RegistrationExercisesModal
-            openModal={openModal}
-            setOpenModal={setOpenModal}
-            regExercises={registration.exercises}
-          />
+                  <Table.Cell className="whitespace-nowrap font-medium text-gray-900 dark:text-white">
+                    {registration.discipline.name}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {registration.discipline.teacher.name}
+                  </Table.Cell>
+                  <Table.Cell>{registration.absences}</Table.Cell>
+                  <Table.Cell
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setSelectedRegExercises(registration.exercises);
+                      setOpenModal(true);
+                    }}
+                  >
+                    {registration.points}
+                  </Table.Cell>
+                  <Table.Cell>
+                    {translateStatus(registration.status)}
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+          {selectedRegExercises !== null && (
+            <RegistrationExercisesModal
+              openModal={openModal}
+              setOpenModal={setOpenModal}
+              regExercises={selectedRegExercises}
+            />
+          )}
         </>
-      ))}
-    </ul>
+      )}
+    </>
   );
 }
 
